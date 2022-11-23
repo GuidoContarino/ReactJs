@@ -1,19 +1,33 @@
-import React from 'react'
-import FlexWrapper from '../FlexWrapper/FlexWrapper';
-import Item from '../Item/Item';
+import React, { useState, useEffect } from "react";
+import FlexWrapper from "../FlexWrapper/FlexWrapper";
+import ItemList from "./ItemList";
+import getItemsFromAPI, { getItemsFromAPIByCategory } from "../../mockService/mockService";
+import { useParams } from "react-router-dom"; 
+
+function ItemListContainer() {
+  const [productsList, setProductsList] = useState([]);
+  const { categoryid } = useParams();
 
 
-function ItemListContainer(props) {
+  useEffect(() => {
+    if (categoryid)
+    getItemsFromAPIByCategory(categoryid).then((itemsDB) => {
+      setProductsList(itemsDB);
+    });
+    else {
+      getItemsFromAPI().then((itemDB) => {
+        setProductsList(itemDB);
+      });
+    }
+  }, [categoryid]);
+
   return (
     <div>
-        <FlexWrapper>
-          <Item title="Proteina" imgurl="/img/proteina.webp" price={1000} details="Lorem ipsum"> </Item>
-          <Item title="Proteina 1" imgurl="/img/proteina1.webp" price={2000} details="Lorem ipsum"> </Item>
-          <Item title="Creatina " imgurl="/img/ultraflex.webp" price={3000} details="Lorem ipsum"> </Item>
-          <Item title="Creatina 1" imgurl="/img/creatina.webp" price={4000} details="Lorem ipsum"> </Item>
-        </FlexWrapper>
+      <FlexWrapper>
+        <ItemList productsList={productsList}/>
+      </FlexWrapper>
     </div>
-  )
+  );
 }
 
-export default ItemListContainer
+export default ItemListContainer;
